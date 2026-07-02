@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — SchoolMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-card animate-in">
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Student Information -->
+        <h2 class="form-section-title"><i class="fas fa-user-graduate"></i> Student Information</h2>
+        <div class="form-grid">
+            {% for field in student_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Parent/Guardian Information -->
+        <h2 class="form-section-title"><i class="fas fa-users"></i> Parent / Guardian Information</h2>
+        <div class="form-grid">
+            {% for field in parent_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                {% if student %}Update Student{% else %}Add Student{% endif %}
+            </button>
+            <a href="{% url 'student_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

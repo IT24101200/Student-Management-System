@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Students — SchoolMS{% endblock %}
+{% block page_title %}Students{% endblock %}
+
+{% block content %}
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-user-graduate"></i> All Students</h3>
+        <div class="table-actions">
+            <form method="get" class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Search students..." value="{{ query }}">
+            </form>
+            <a href="{% url 'add_student' %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add Student
+            </a>
+        </div>
+    </div>
+
+    {% if students %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Student ID</th>
+                <th>Gender</th>
+                <th>Class</th>
+                <th>Admission No.</th>
+                <th>Mobile</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>
+                    <div class="student-info">
+                        <div class="student-avatar">
+                            {% if student.profile_image %}
+                            <img src="{{ student.profile_image.url }}" alt="{{ student.full_name }}">
+                            {% else %}
+                            {{ student.first_name|first }}{{ student.last_name|first }}
+                            {% endif %}
+                        </div>
+                        <span>{{ student.full_name }}</span>
+                    </div>
+                </td>
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.gender }}</td>
+                <td>{{ student.classroom|default:"—" }}</td>
+                <td>{{ student.admission_number }}</td>
+                <td>{{ student.mobile_number|default:"—" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_student' student.pk %}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_student' student.pk %}" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if students.has_other_pages %}
+    <div class="pagination">
+        {% if students.has_previous %}
+        <a href="?page={{ students.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        {% endif %}
+
+        {% for num in students.paginator.page_range %}
+            {% if students.number == num %}
+            <span class="current">{{ num }}</span>
+            {% elif num > students.number|add:'-3' and num < students.number|add:'3' %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if students.has_next %}
+        <a href="?page={{ students.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-user-graduate"></i>
+        <h3>No students found</h3>
+        {% if query %}
+        <p>No results for "{{ query }}". Try a different search.</p>
+        {% else %}
+        <p>Start by adding your first student.</p>
+        <a href="{% url 'add_student' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Student
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

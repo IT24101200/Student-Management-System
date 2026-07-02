@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Departments — SchoolMS{% endblock %}
+{% block page_title %}Departments{% endblock %}
+
+{% block content %}
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-building"></i> All Departments</h3>
+        <a href="{% url 'add_department' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Department
+        </a>
+    </div>
+
+    {% if departments %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Head</th>
+                <th>Teachers</th>
+                <th>Students</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in departments %}
+            <tr>
+                <td><strong>{{ dept.name }}</strong></td>
+                <td>{{ dept.head|default:"—" }}</td>
+                <td>{{ dept.teacher_count }}</td>
+                <td>{{ dept.student_count }}</td>
+                <td>{{ dept.created_at|date:"M d, Y" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_department' dept.pk %}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_department' dept.pk %}" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-building"></i>
+        <h3>No departments yet</h3>
+        <p>Create your first department to organize your institution.</p>
+        <a href="{% url 'add_department' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Department
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

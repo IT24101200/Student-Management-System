@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Teacher Dashboard — SchoolMS{% endblock %}
+{% block page_title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-chalkboard"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Classes</h3>
+            <div class="stat-value">{{ total_classes }}</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Students</h3>
+            <div class="stat-value">{{ total_students }}</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Subjects Taught</h3>
+            <div class="stat-value">{{ total_subjects }}</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Semester</h3>
+            <div class="stat-value">Active</div>
+        </div>
+    </div>
+</div>
+
+<!-- Teacher Info -->
+<div class="dashboard-grid">
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-user"></i> My Profile</h3>
+        {% if teacher %}
+        <ul class="info-list">
+            <li><i class="fas fa-id-badge"></i> {{ teacher.full_name }}</li>
+            <li><i class="fas fa-building"></i> {{ teacher.department|default:"No department assigned" }}</li>
+            <li><i class="fas fa-phone"></i> {{ teacher.mobile_number|default:"Not set" }}</li>
+            <li><i class="fas fa-calendar"></i> Joined: {{ teacher.joining_date|date:"M d, Y"|default:"Not set" }}</li>
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>Teacher profile not set up yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-book"></i> My Subjects</h3>
+        {% if teacher and teacher.subjects.all %}
+        <ul class="info-list">
+            {% for subject in teacher.subjects.all %}
+            <li><i class="fas fa-bookmark"></i> {{ subject.name }} ({{ subject.code }})</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>No subjects assigned yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-door-open"></i> My Classes</h3>
+        {% if classrooms %}
+        <ul class="info-list">
+            {% for classroom in classrooms %}
+            <li><i class="fas fa-chalkboard"></i> {{ classroom }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>No classes assigned yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

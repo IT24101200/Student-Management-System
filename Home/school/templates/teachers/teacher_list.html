@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Teachers — SchoolMS{% endblock %}
+{% block page_title %}Teachers{% endblock %}
+
+{% block content %}
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-chalkboard-teacher"></i> All Teachers</h3>
+        <div class="table-actions">
+            <form method="get" class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Search teachers..." value="{{ query }}">
+            </form>
+            <a href="{% url 'add_teacher' %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Add Teacher
+            </a>
+        </div>
+    </div>
+
+    {% if teachers %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Teacher</th>
+                <th>Department</th>
+                <th>Mobile</th>
+                <th>Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td>
+                    <div class="student-info">
+                        <div class="student-avatar">
+                            {% if teacher.profile_image %}
+                            <img src="{{ teacher.profile_image.url }}" alt="{{ teacher.full_name }}">
+                            {% else %}
+                            {{ teacher.first_name|first }}{{ teacher.last_name|first }}
+                            {% endif %}
+                        </div>
+                        <span>{{ teacher.full_name }}</span>
+                    </div>
+                </td>
+                <td>{{ teacher.department|default:"—" }}</td>
+                <td>{{ teacher.mobile_number|default:"—" }}</td>
+                <td>{{ teacher.joining_date|date:"M d, Y"|default:"—" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_teacher' teacher.pk %}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_teacher' teacher.pk %}" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if teachers.has_other_pages %}
+    <div class="pagination">
+        {% if teachers.has_previous %}
+        <a href="?page={{ teachers.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        {% endif %}
+        {% for num in teachers.paginator.page_range %}
+            {% if teachers.number == num %}
+            <span class="current">{{ num }}</span>
+            {% elif num > teachers.number|add:'-3' and num < teachers.number|add:'3' %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if teachers.has_next %}
+        <a href="?page={{ teachers.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <h3>No teachers found</h3>
+        <p>Start by adding your first teacher.</p>
+        <a href="{% url 'add_teacher' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Teacher
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SchoolMS{% endblock %}</title>
+    <meta name="description" content="Comprehensive School & Student Management System">
+    <link rel="stylesheet" href="{% static 'school/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    {% if user.is_authenticated %}
+    <!-- ═══ Sidebar ═══ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>SchoolMS</span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- Common -->
+            <div class="nav-section">
+                <span class="nav-section-title">Main</span>
+                {% if user.is_admin or user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </a>
+                {% elif user.is_teacher %}
+                <a href="{% url 'teacher_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </a>
+                {% elif user.is_student %}
+                <a href="{% url 'student_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </a>
+                {% endif %}
+            </div>
+
+            {% if user.is_admin or user.is_superuser %}
+            <div class="nav-section">
+                <span class="nav-section-title">Management</span>
+                <a href="{% url 'student_list' %}" class="nav-link {% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-user-graduate"></i><span>Students</span>
+                </a>
+                <a href="{% url 'teacher_list' %}" class="nav-link {% if 'teacher' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-chalkboard-teacher"></i><span>Teachers</span>
+                </a>
+                <a href="{% url 'department_list' %}" class="nav-link {% if 'department' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-building"></i><span>Departments</span>
+                </a>
+                <a href="{% url 'subject_list' %}" class="nav-link {% if 'subject' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-book"></i><span>Subjects</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="nav-section-title">Accounts</span>
+                <a href="{% url 'fee_list' %}" class="nav-link {% if 'fee' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-money-bill-wave"></i><span>Fees</span>
+                </a>
+                <a href="{% url 'expense_list' %}" class="nav-link {% if 'expense' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-receipt"></i><span>Expenses</span>
+                </a>
+                <a href="{% url 'salary_list' %}" class="nav-link {% if 'salary' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-wallet"></i><span>Salaries</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="nav-section">
+                <span class="nav-section-title">Account</span>
+                <a href="{% url 'notification_list' %}" class="nav-link {% if 'notification' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-bell"></i><span>Notifications</span>
+                    {% if unread_notification_count > 0 %}
+                    <span class="nav-badge">{{ unread_notification_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'logout' %}" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- ═══ Main Content Area ═══ -->
+    <main class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div class="navbar-left">
+                <button class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+            <div class="navbar-right">
+                <a href="{% url 'notification_list' %}" class="notification-bell" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    {% if unread_notification_count > 0 %}
+                    <span class="bell-badge">{{ unread_notification_count }}</span>
+                    {% endif %}
+                </a>
+                <div class="user-avatar" title="{{ user.username }}">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="flash-message flash-{{ message.tags }}" id="flash-{{ forloop.counter }}">
+                <div class="flash-content">
+                    {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                    {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% else %}
+                    <i class="fas fa-info-circle"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                </div>
+                <button class="flash-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% else %}
+    <!-- ═══ Auth pages (no sidebar) ═══ -->
+    {% if messages %}
+    <div class="messages-container auth-messages">
+        {% for message in messages %}
+        <div class="flash-message flash-{{ message.tags }}">
+            <div class="flash-content">
+                {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle"></i>
+                {% else %}
+                <i class="fas fa-info-circle"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+            <button class="flash-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    <script src="{% static 'school/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

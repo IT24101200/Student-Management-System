@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Subjects — SchoolMS{% endblock %}
+{% block page_title %}Subjects{% endblock %}
+
+{% block content %}
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-book"></i> All Subjects</h3>
+        <a href="{% url 'add_subject' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Subject
+        </a>
+    </div>
+
+    {% if subjects %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Code</th>
+                <th>Department</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <td><strong>{{ subject.name }}</strong></td>
+                <td><span class="status-badge status-active">{{ subject.code }}</span></td>
+                <td>{{ subject.department }}</td>
+                <td>{{ subject.description|truncatewords:10|default:"—" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_subject' subject.pk %}" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_subject' subject.pk %}" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-book"></i>
+        <h3>No subjects yet</h3>
+        <p>Add your first subject to the curriculum.</p>
+        <a href="{% url 'add_subject' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Subject
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

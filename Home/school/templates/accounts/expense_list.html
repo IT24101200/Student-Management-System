@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Expenses — SchoolMS{% endblock %}
+{% block page_title %}Expense Records{% endblock %}
+
+{% block content %}
+<div class="summary-cards">
+    <div class="summary-card warning">
+        <div class="summary-label">Total Expenses</div>
+        <div class="summary-value">${{ total_expenses|floatformat:0 }}</div>
+    </div>
+</div>
+
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-receipt"></i> All Expenses</h3>
+        <a href="{% url 'add_expense' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Expense
+        </a>
+    </div>
+
+    {% if expenses %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td><strong>{{ expense.title }}</strong></td>
+                <td>${{ expense.amount }}</td>
+                <td>{{ expense.date|date:"M d, Y" }}</td>
+                <td>{{ expense.description|truncatewords:10|default:"—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-receipt"></i>
+        <h3>No expenses recorded</h3>
+        <p>Track institutional expenses here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

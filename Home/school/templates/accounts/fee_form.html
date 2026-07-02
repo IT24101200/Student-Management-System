@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — SchoolMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-card animate-in">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <h2 class="form-section-title"><i class="fas fa-money-bill-wave"></i> Fee Details</h2>
+        <div class="form-grid">
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <ul class="errorlist">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Fee Record
+            </button>
+            <a href="{% url 'fee_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

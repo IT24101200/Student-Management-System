@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Salaries — SchoolMS{% endblock %}
+{% block page_title %}Salary Records{% endblock %}
+
+{% block content %}
+<div class="summary-cards">
+    <div class="summary-card success">
+        <div class="summary-label">Total Paid</div>
+        <div class="summary-value">${{ total_paid|floatformat:0 }}</div>
+    </div>
+    <div class="summary-card danger">
+        <div class="summary-label">Total Pending</div>
+        <div class="summary-value">${{ total_pending|floatformat:0 }}</div>
+    </div>
+</div>
+
+<div class="table-card animate-in">
+    <div class="table-header">
+        <h3><i class="fas fa-wallet"></i> All Salaries</h3>
+        <a href="{% url 'add_salary' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Add Salary
+        </a>
+    </div>
+
+    {% if salaries %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Teacher</th>
+                <th>Amount</th>
+                <th>Month</th>
+                <th>Year</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salary in salaries %}
+            <tr>
+                <td>{{ salary.teacher.full_name }}</td>
+                <td><strong>${{ salary.amount }}</strong></td>
+                <td>{{ salary.month }}</td>
+                <td>{{ salary.year }}</td>
+                <td><span class="status-badge status-{{ salary.status|lower }}">{{ salary.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-wallet"></i>
+        <h3>No salary records</h3>
+        <p>Add salary records to manage teacher payments.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

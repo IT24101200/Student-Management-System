@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard — SchoolMS{% endblock %}
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Enrolled Courses</h3>
+            <div class="stat-value">{{ total_subjects }}</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Attendance</h3>
+            <div class="stat-value">—</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-project-diagram"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Projects</h3>
+            <div class="stat-value">—</div>
+        </div>
+    </div>
+    <div class="stat-card animate-in">
+        <div class="stat-icon">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Tests</h3>
+            <div class="stat-value">—</div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Info -->
+<div class="dashboard-grid">
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-user"></i> My Profile</h3>
+        {% if student %}
+        <ul class="info-list">
+            <li><i class="fas fa-id-badge"></i> {{ student.full_name }}</li>
+            <li><i class="fas fa-hashtag"></i> Student ID: {{ student.student_id }}</li>
+            <li><i class="fas fa-door-open"></i> Class: {{ student.classroom|default:"Not assigned" }}</li>
+            <li><i class="fas fa-calendar"></i> Joined: {{ student.joining_date|date:"M d, Y" }}</li>
+            <li><i class="fas fa-phone"></i> {{ student.mobile_number|default:"Not set" }}</li>
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>Student profile not linked to your account yet. Please contact an administrator.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-book"></i> My Courses</h3>
+        {% if subjects %}
+        <ul class="info-list">
+            {% for subject in subjects %}
+            <li><i class="fas fa-bookmark"></i> {{ subject.name }} ({{ subject.code }})</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>No courses enrolled yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-card animate-in">
+        <h3><i class="fas fa-money-bill-wave"></i> Fee Status</h3>
+        {% if fees %}
+        <ul class="info-list">
+            {% for fee in fees %}
+            <li>
+                <i class="fas fa-receipt"></i>
+                {{ fee.fee_type }} — ${{ fee.amount }}
+                <span class="status-badge status-{{ fee.status|lower }}">{{ fee.status }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>No fee records found.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

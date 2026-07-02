@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Delete Department — SchoolMS{% endblock %}
+{% block page_title %}Delete Department{% endblock %}
+
+{% block content %}
+<div class="confirm-delete-card animate-in">
+    <div class="delete-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h2>Delete Department?</h2>
+    <p>
+        Are you sure you want to delete <strong>{{ department.name }}</strong>?
+        This will also affect related classrooms, subjects, and teachers. This action cannot be undone.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="btn-group">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Yes, Delete
+            </button>
+            <a href="{% url 'department_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
